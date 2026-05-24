@@ -2,8 +2,6 @@ import asyncio
 import logging
 from collections.abc import Callable
 
-import click
-
 from mclaw.agents.graph import build_stage1_graph
 from mclaw.agents.state import AgentState
 
@@ -15,28 +13,33 @@ async def run_plan(
     callback: Callable[[str], None] | None = None,
 ) -> str:
     """Run mod installation planning, streaming progress via callback."""
-    _emit(callback, f"Planning: {query}")
+    _emit(callback, f"[bold]Planning:[/] {query}")
 
     state = AgentState(user_query=query, stage=1)
     graph = build_stage1_graph()
 
-    _emit(callback, "Running Planner -> Executor graph...")
-    _emit(callback, "  [Planner] Analyzing request...")
+    _emit(callback, "[bold]Running Planner -> Executor graph...[/]")
+    _emit(callback, "  [dim][Planner] Analyzing request...[/]")
     result = await graph.ainvoke(state)
 
     state = _result_to_state(result)
 
-    _emit(callback, f"\nTarget: Minecraft {state.target_mc_version} ({state.target_loader})")
+    _emit(callback, f"\n[bold]Target:[/] Minecraft {state.target_mc_version} ({state.target_loader})")
 
-    _emit(callback, f"\nTasks ({len(state.tasks)}):")
+    _emit(callback, f"\n[bold]Tasks ({len(state.tasks)}):[/]")
     for i, task in enumerate(state.tasks):
-        status_icon = "v" if task.status == "completed" else "x" if task.status == "failed" else "o"
-        _emit(callback, f"  [{status_icon}] {task.description}")
+        if task.status == "completed":
+            icon = "[green]v[/]"
+        elif task.status == "failed":
+            icon = "[red]x[/]"
+        else:
+            icon = "[dim]o[/]"
+        _emit(callback, f"  {icon} {task.description}")
         if task.result:
             _emit(callback, f"      -> {task.result}")
 
     if state.error:
-        _emit(callback, f"\nError: {state.error}")
+        _emit(callback, f"\n[bold red]Error:[/] {state.error}")
 
     return _format_summary(state)
 
@@ -66,11 +69,3 @@ def _result_to_state(result: dict) -> AgentState:
     state.diagnosis = result.get("diagnosis")
     state.current_task_index = result.get("current_task_index", 0)
     return state
-
-
-@click.command()
-@click.argument("query")
-@click.pass_context
-def plan(ctx: click.Context, query: str) -> None:
-    """Plan a mod installation with dual-agent orchestration."""
-    asyncio.run(run_plan(query=query, callback=click.echo))

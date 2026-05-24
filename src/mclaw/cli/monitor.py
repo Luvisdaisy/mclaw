@@ -1,36 +1,36 @@
 import logging
 import time
 from pathlib import Path
+from typing import Annotated
 
-import click
+import typer
+from rich.console import Console
 
 from mclaw.mc_platform.crash_parser import parse_crash_log
 
 logger = logging.getLogger(__name__)
+console = Console()
 
-
-@click.group()
-def monitor_cmd() -> None:
-    """Monitor — Watch crash reports directory for automatic diagnosis."""
-
-
-@monitor_cmd.command()
-@click.option(
-    "--path", type=click.Path(), default=None,
-    help="Crash reports directory (auto-detected if omitted)",
+monitor_app = typer.Typer(
+    name="monitor",
+    help="Monitor — Watch crash reports directory for automatic diagnosis.",
 )
-@click.option("--interval", type=int, default=5, help="Polling interval in seconds")
-@click.pass_context
-def watch(ctx: click.Context, path: str | None, interval: int) -> None:
+
+
+@monitor_app.command()
+def watch(
+    path: Annotated[str | None, typer.Option("--path")] = None,
+    interval: Annotated[int, typer.Option("--interval")] = 5,
+) -> None:
     """Watch crash reports directory for new crash files."""
     watch_path = _resolve_watch_path(path)
 
     if not watch_path.exists():
-        click.echo(f"Warning: {watch_path} does not exist. Waiting for it...")
+        console.print(f"[yellow]Warning:[/] {watch_path} does not exist. Waiting for it...")
 
-    click.echo(f"Watching: {watch_path}")
-    click.echo(f"Polling interval: {interval}s")
-    click.echo("Press Ctrl+C to stop.\n")
+    console.print(f"Watching: {watch_path}")
+    console.print(f"Polling interval: {interval}s")
+    console.print("Press Ctrl+C to stop.\n")
 
     known_files: set[str] = set()
 
@@ -44,11 +44,10 @@ def watch(ctx: click.Context, path: str | None, interval: int) -> None:
                             _handle_new_crash(entry)
             time.sleep(interval)
     except KeyboardInterrupt:
-        click.echo("\nMonitor stopped.")
+        console.print("\nMonitor stopped.")
 
 
 def _resolve_watch_path(path: str | None) -> Path:
-    """Resolve the crash reports directory for the current platform."""
     if path:
         return Path(path)
 
@@ -63,14 +62,13 @@ def _resolve_watch_path(path: str | None) -> Path:
 
 
 def _handle_new_crash(filepath: Path) -> None:
-    """Process a newly detected crash report."""
-    click.echo(f"\n[{time.strftime('%H:%M:%S')}] New crash: {filepath.name}")
+    console.print(f"\n[[bold]{time.strftime('%H:%M:%S')}[/]] New crash: {filepath.name}")
 
     try:
         parsed = parse_crash_log(filepath)
-        click.echo(f"  Type: {parsed.crash_type or 'unknown'}")
-        click.echo(f"  Error: {parsed.error_message or parsed.description}")
+        console.print(f"  Type: {parsed.crash_type or 'unknown'}")
+        console.print(f"  Error: {parsed.error_message or parsed.description}")
         if parsed.referenced_mods:
-            click.echo(f"  Mods: {', '.join(parsed.referenced_mods)}")
+            console.print(f"  Mods: {', '.join(parsed.referenced_mods)}")
     except Exception as e:
-        click.echo(f"  Parse error: {e}")
+        console.print(f"  [red]Parse error:[/] {e}")

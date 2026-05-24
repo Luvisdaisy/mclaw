@@ -1,40 +1,44 @@
+import asyncio
 from pathlib import Path
 
-import click
+from rich.console import Console
+from rich.panel import Panel
+from rich.prompt import IntPrompt, Prompt
+from rich.rule import Rule
 
 
-def show_menu() -> int:
+def show_menu(console: Console) -> int:
     """Display the interactive menu and return the user's choice (1-3)."""
-    click.clear()
-    click.echo("=" * 50)
-    click.echo("  mclaw — Minecraft Modpack Analysis Tool")
-    click.echo("=" * 50)
-    click.echo()
-    click.echo("  [1] Diagnose  — crash log analysis")
-    click.echo("  [2] Plan      — mod installation planning")
-    click.echo("  [3] Solve     — full analysis with diagnosis")
-    click.echo("  [0] Exit")
-    click.echo()
+    console.clear()
+    console.print(
+        Panel.fit(
+            "[bold yellow]mclaw[/] — Minecraft Modpack Analysis Tool\n"
+            "[dim]LLM-powered agent technology learning project[/]",
+            border_style="yellow",
+        )
+    )
+    console.print()
+    console.print("  [bold cyan][1][/] Diagnose  — crash log analysis")
+    console.print("  [bold cyan][2][/] Plan      — mod installation planning")
+    console.print("  [bold cyan][3][/] Solve     — full analysis with diagnosis")
+    console.print("  [bold cyan][0][/] Exit")
+    console.print()
 
     while True:
         try:
-            choice = click.prompt("  Enter choice", type=int, default=0)
+            choice = IntPrompt.ask("  Enter choice", default=0, console=console)
             if choice in (0, 1, 2, 3):
                 return choice
-            click.echo("  Please enter 0-3")
-        except click.Abort:
+            console.print("[red]Please enter 0-3[/]")
+        except (ValueError, KeyboardInterrupt):
             return 0
 
 
-def prompt_crash_log_path() -> str | None:
+def prompt_crash_log_path(console: Console) -> str | None:
     """Prompt for a crash log file path with validation."""
     while True:
         try:
-            path_str = click.prompt(
-                "  Crash log file path",
-                type=str,
-                default="",
-            )
+            path_str = Prompt.ask("  Crash log file path", default="", console=console)
             if not path_str:
                 return None
 
@@ -42,83 +46,79 @@ def prompt_crash_log_path() -> str | None:
             if path.exists() and path.is_file():
                 return str(path)
 
-            click.echo(f"  File not found: {path_str}")
-        except click.Abort:
+            console.print(f"[red]File not found:[/] {path_str}")
+        except (ValueError, KeyboardInterrupt):
             return None
 
 
-def prompt_query() -> str | None:
+def prompt_query(console: Console) -> str | None:
     """Prompt for a natural language query."""
     try:
-        query = click.prompt(
-            "  What would you like to do?",
-            type=str,
-            default="",
-        )
+        query = Prompt.ask("  What would you like to do?", default="", console=console)
         return query.strip() if query.strip() else None
-    except click.Abort:
+    except (ValueError, KeyboardInterrupt):
         return None
 
 
-def run_interactive() -> None:
+def run_interactive(console: Console | None = None) -> None:
     """Main interactive loop — show menu, route to selected function."""
-    choice = show_menu()
+    if console is None:
+        console = Console()
+
+    choice = show_menu(console)
 
     if choice == 0:
-        click.echo("  Goodbye!")
+        console.print("  Goodbye!")
         return
 
     if choice == 1:
-        _run_diagnose_interactive()
+        _run_diagnose_interactive(console)
     elif choice == 2:
-        _run_plan_interactive()
+        _run_plan_interactive(console)
     elif choice == 3:
-        _run_solve_interactive()
+        _run_solve_interactive(console)
 
 
-def _run_diagnose_interactive() -> None:
-    """Interactive diagnose flow with streaming output."""
-    click.clear()
-    click.echo("--- Diagnose ---")
-    click.echo()
+def _run_diagnose_interactive(console: Console) -> None:
+    """Interactive diagnose with streaming via Rich Console."""
+    console.clear()
+    console.print(Rule("[bold]Diagnose[/]", style="cyan"))
+    console.print()
 
-    path = prompt_crash_log_path()
+    path = prompt_crash_log_path(console)
     if not path:
-        click.echo("  Cancelled.")
+        console.print("  Cancelled.")
         return
 
     from mclaw.cli.diagnose_cmd import run_diagnose
-    import asyncio
-    asyncio.run(run_diagnose(crash_log=path, callback=click.echo))
+    asyncio.run(run_diagnose(crash_log=path, callback=console.print))
 
 
-def _run_plan_interactive() -> None:
-    """Interactive plan flow with streaming output."""
-    click.clear()
-    click.echo("--- Plan ---")
-    click.echo()
+def _run_plan_interactive(console: Console) -> None:
+    """Interactive plan with streaming via Rich Console."""
+    console.clear()
+    console.print(Rule("[bold]Plan[/]", style="cyan"))
+    console.print()
 
-    query = prompt_query()
+    query = prompt_query(console)
     if not query:
-        click.echo("  Cancelled.")
+        console.print("  Cancelled.")
         return
 
     from mclaw.cli.plan_cmd import run_plan
-    import asyncio
-    asyncio.run(run_plan(query=query, callback=click.echo))
+    asyncio.run(run_plan(query=query, callback=console.print))
 
 
-def _run_solve_interactive() -> None:
-    """Interactive solve flow with streaming output."""
-    click.clear()
-    click.echo("--- Solve ---")
-    click.echo()
+def _run_solve_interactive(console: Console) -> None:
+    """Interactive solve with streaming via Rich Console."""
+    console.clear()
+    console.print(Rule("[bold]Solve[/]", style="cyan"))
+    console.print()
 
-    query = prompt_query()
+    query = prompt_query(console)
     if not query:
-        click.echo("  Cancelled.")
+        console.print("  Cancelled.")
         return
 
     from mclaw.cli.solve_cmd import run_solve
-    import asyncio
-    asyncio.run(run_solve(query=query, callback=click.echo))
+    asyncio.run(run_solve(query=query, callback=console.print))
