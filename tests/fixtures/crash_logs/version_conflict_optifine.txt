@@ -1,0 +1,22 @@
+---- Minecraft Crash Report ----
+// OptiFine happened.
+
+Time: 2024-06-01 16:20:00
+Description: OptiFine HD U H9 pre1 is incompatible with Forge 47.2.0
+    Recommended: Use Embeddium instead of OptiFine on Forge
+
+java.lang.NoSuchMethodError: net.minecraft.client.renderer.LevelRenderer.m_109599()V
+    at net.optifine.shaders.Shaders.beginRender(Shaders.java:4842)
+    at net.minecraft.client.renderer.LevelRenderer.m_109599(LevelRenderer.java:1276)
+    at net.minecraft.client.Minecraft.m_91398(Minecraft.java:1450)
+    ... 18 more
+
+-- MOD forge --
+-- MOD optifine HD_U_H9_pre1 --
+-- MOD embeddium 0.2.0 --
+-- MOD create 0.5.1 --
+
+-- System Details --
+Minecraft Version: 1.20.1
+Forge Version: 47.2.0
+Note: OptiFine is known to be incompatible with many Forge mods. Consider removing it.

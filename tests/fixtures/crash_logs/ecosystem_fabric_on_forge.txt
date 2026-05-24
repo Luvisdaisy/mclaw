@@ -1,0 +1,19 @@
+---- Minecraft Crash Report ----
+// You should try our sister game, Minceraft!
+
+Time: 2024-04-01 14:00:00
+Description: Attempting to load a Fabric mod on Forge
+
+java.lang.ClassCastException: net.minecraft.world.item.ArmorItem cannot be cast to org.quiltmc.qsl.base.api.entrypoint.ModInitializer
+    at net.minecraftforge.fml.javafmlmod.FMLJavaModLanguageProvider.lambda$loadParty$4(FMLJavaModLanguageProvider.java:95)
+    at net.minecraftforge.fml.ModLoader.dispatchAndHandleError(ModLoader.java:202)
+
+-- MOD forge --
+-- MOD fabric-api 0.92.0 --
+-- MOD sodium 0.5.8 --
+-- MOD iris 1.7.0 --
+
+-- System Details --
+Minecraft Version: 1.20.1
+Forge Version: 47.2.0
+Note: fabric-api is a Fabric mod and cannot be loaded on Forge.

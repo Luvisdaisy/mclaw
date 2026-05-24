@@ -1,0 +1,21 @@
+---- Minecraft Crash Report ----
+// I bet Cylons wouldn't have this problem.
+
+Time: 2024-03-12 11:05:00
+Description: Mod alexsmobs 1.22.8 requires Minecraft 1.20.4
+    Currently running: Minecraft 1.20.1
+
+java.lang.RuntimeException: Incompatible Minecraft version
+    at net.minecraftforge.fml.ModLoader.dispatchAndHandleError(ModLoader.java:202)
+    at net.minecraftforge.fml.ModLoader.waitForTransition(ModLoader.java:235)
+    at net.minecraftforge.fml.ModLoader.lambda$null$6(ModLoader.java:189)
+    at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1736)
+
+-- MOD forge --
+-- MOD alexsmobs 1.22.8 --
+-- MOD citadel 2.5.4 --
+-- MOD jei 15.2.0 --
+
+-- System Details --
+Minecraft Version: 1.20.1
+Forge Version: 47.2.0

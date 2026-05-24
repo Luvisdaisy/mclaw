@@ -1,0 +1,20 @@
+---- Minecraft Crash Report ----
+// Why did you do that?
+
+Time: 2024-03-05 18:22:30
+Description: Mod sodium 0.5.8 requires fabric-api 0.92.0 or above
+    Currently installed: fabric-api 0.90.0
+
+java.lang.RuntimeException: Version conflict detected for mod sodium
+    at net.fabricmc.loader.impl.game.GameProvider.launch(GameProvider.java:87)
+    at net.fabricmc.loader.impl.FabricLoaderImpl.load(FabricLoaderImpl.java:200)
+    at net.fabricmc.loader.impl.FabricLoaderImpl.init(FabricLoaderImpl.java:150)
+    at net.fabricmc.loader.impl.launch.knot.Knot.init(Knot.java:148)
+    at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:68)
+    ... 15 more
+
+Fabric mods: sodium 0.5.8, iris 1.7.0, fabric-api 0.90.0, fabric-loader 0.15.6
+
+-- System Details --
+Minecraft Version: 1.20.4
+Fabric Loader: 0.15.6

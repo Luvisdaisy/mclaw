@@ -1,0 +1,35 @@
+---- Minecraft Crash Report ----
+// Don't be sad, have a hug! <3
+
+Time: 2024-01-15 14:32:10
+Description: Mod create requires mod flywheel 0.6.10 or above
+    Currently installed: flywheel 0.6.8
+
+java.lang.NoClassDefFoundError: com/simibubi/create/foundation/block/connected/ConnectedBlocks
+    at com.simibubi.create.Create.init(Create.java:120)
+    at net.minecraftforge.fml.javafmlmod.FMLJavaModLanguageProvider.lambda$loadParty$4(FMLJavaModLanguageProvider.java:95)
+    at net.minecraftforge.fml.ModLoader.dispatchAndHandleError(ModLoader.java:202)
+    at net.minecraftforge.fml.ModLoader.lambda$null$6(ModLoader.java:189)
+    at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1736)
+    at java.base/java.util.concurrent.ThreadPerTaskExecutor$TaskRunner.run(ThreadPerTaskExecutor.java:314)
+    ... 20 more
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+-- Head --
+Thread: Render thread
+Stacktrace:
+    at com.simibubi.create.Create.init(Create.java:120)
+    at net.minecraftforge.fml.javafmlmod.FMLJavaModLanguageProvider.lambda$loadParty$4(FMLJavaModLanguageProvider.java:95)
+
+-- MOD forge --
+-- MOD create 0.5.1 --
+-- MOD flywheel 0.6.8 --
+-- MOD jei 15.2.0 --
+-- MOD journeymap 5.9.0 --
+
+-- System Details --
+Minecraft Version: 1.20.1
+Forge Version: 47.2.0
+Operating System: Windows 10 (amd64)
+Java Version: 17.0.8, Microsoft

@@ -1,0 +1,18 @@
+---- Minecraft Crash Report ----
+// Everything's going wrong!
+
+Time: 2024-04-15 08:30:00
+Description: Mod create is a Forge mod and cannot be loaded on Fabric
+
+java.lang.RuntimeException: Could not execute entrypoint stage 'main' due to missing required mods!
+    at net.fabricmc.loader.impl.FabricLoaderImpl.load(FabricLoaderImpl.java:200)
+    at net.fabricmc.loader.impl.FabricLoaderImpl.init(FabricLoaderImpl.java:150)
+    Caused by: java.lang.ClassNotFoundException: net.minecraftforge.fml.common.Mod
+    at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641)
+
+Fabric mods: create 0.5.1f, fabric-api 0.92.0, fabric-loader 0.15.6
+
+-- System Details --
+Minecraft Version: 1.20.1
+Fabric Loader: 0.15.6
+Note: create is a Forge/NeoForge mod. Use the Fabric port instead.
