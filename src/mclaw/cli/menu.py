@@ -1,37 +1,37 @@
 import asyncio
 from pathlib import Path
 
+from prompt_toolkit.shortcuts import radiolist_dialog
+from prompt_toolkit.styles import Style
 from rich.console import Console
-from rich.panel import Panel
-from rich.prompt import IntPrompt, Prompt
+from rich.prompt import Prompt
 from rich.rule import Rule
 
 
-def show_menu(console: Console) -> int:
-    """Display the interactive menu and return the user's choice (1-3)."""
-    console.clear()
-    console.print(
-        Panel.fit(
-            "[bold yellow]mclaw[/] — Minecraft Modpack Analysis Tool\n"
-            "[dim]LLM-powered agent technology learning project[/]",
-            border_style="yellow",
-        )
-    )
-    console.print()
-    console.print("  [bold cyan][1][/] Diagnose  — crash log analysis")
-    console.print("  [bold cyan][2][/] Plan      — mod installation planning")
-    console.print("  [bold cyan][3][/] Solve     — full analysis with diagnosis")
-    console.print("  [bold cyan][0][/] Exit")
-    console.print()
+DIALOG_STYLE = Style.from_dict({
+    "dialog": "bg:#1a1a2e",
+    "dialog frame-label": "bg:#ffffff #000000",
+    "dialog.body": "bg:#1a1a2e #ffffff",
+    "radio-list": "#ffffff",
+    "radio-list.selected": "bg:#00afff #ffffff",
+    "dialog.title": "bg:#ffd700 #000000",
+})
 
-    while True:
-        try:
-            choice = IntPrompt.ask("  Enter choice", default=0, console=console)
-            if choice in (0, 1, 2, 3):
-                return choice
-            console.print("[red]Please enter 0-3[/]")
-        except (ValueError, KeyboardInterrupt):
-            return 0
+
+def show_menu() -> str | None:
+    """Display an interactive menu with arrow key navigation."""
+    result = radiolist_dialog(
+        title="mclaw — Minecraft Modpack Analysis Tool",
+        text="Select a function (use arrows to move, Enter to confirm):",
+        values=[
+            ("diagnose", "Diagnose  — crash log analysis"),
+            ("plan",     "Plan      — mod installation planning"),
+            ("solve",    "Solve     — full analysis with diagnosis"),
+        ],
+        style=DIALOG_STYLE,
+    ).run()
+
+    return result
 
 
 def prompt_crash_log_path(console: Console) -> str | None:
@@ -65,22 +65,21 @@ def run_interactive(console: Console | None = None) -> None:
     if console is None:
         console = Console()
 
-    choice = show_menu(console)
+    choice = show_menu()
 
-    if choice == 0:
+    if choice is None or choice == "exit":
         console.print("  Goodbye!")
         return
 
-    if choice == 1:
+    if choice == "diagnose":
         _run_diagnose_interactive(console)
-    elif choice == 2:
+    elif choice == "plan":
         _run_plan_interactive(console)
-    elif choice == 3:
+    elif choice == "solve":
         _run_solve_interactive(console)
 
 
 def _run_diagnose_interactive(console: Console) -> None:
-    """Interactive diagnose with streaming via Rich Console."""
     console.clear()
     console.print(Rule("[bold]Diagnose[/]", style="cyan"))
     console.print()
@@ -95,7 +94,6 @@ def _run_diagnose_interactive(console: Console) -> None:
 
 
 def _run_plan_interactive(console: Console) -> None:
-    """Interactive plan with streaming via Rich Console."""
     console.clear()
     console.print(Rule("[bold]Plan[/]", style="cyan"))
     console.print()
@@ -110,7 +108,6 @@ def _run_plan_interactive(console: Console) -> None:
 
 
 def _run_solve_interactive(console: Console) -> None:
-    """Interactive solve with streaming via Rich Console."""
     console.clear()
     console.print(Rule("[bold]Solve[/]", style="cyan"))
     console.print()
