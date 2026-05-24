@@ -10,16 +10,63 @@ Agent technology learning project using Minecraft modpack building as a practice
 
 ## Quick Start
 
+### 1. 安装依赖
+
 ```bash
-# Clone and install
-git clone <repo-url> && cd mclaw
+git clone git@github.com:Luvisdaisy/mclaw.git && cd mclaw
 uv sync
+```
 
-# Start infrastructure
-uv run poe infra-up
+### 2. 启动 Ollama（LLM 服务）
 
-# Run tests
-uv run poe test
+mclaw 默认使用本地 Ollama 运行 `qwen3:4b` 模型。
+
+```bash
+# 安装 Ollama: https://ollama.com
+ollama serve              # 启动服务（如未运行）
+ollama pull qwen3:4b      # 拉取对话模型
+ollama pull mxbai-embed-large  # 拉取 embedding 模型（内存系统需要）
+```
+
+验证：
+```bash
+ollama list
+# 应看到 qwen3:4b 和 mxbai-embed-large
+```
+
+### 3. 启动 ChromaDB（可选，内存系统需要）
+
+```bash
+uv run poe infra-up       # docker compose up -d
+# ChromaDB 运行在 localhost:8000
+```
+
+### 4. 使用
+
+```bash
+# 诊断崩溃日志
+uv run mclaw diagnose --crash-log tests/fixtures/crash_logs/dependency_missing_create.txt
+
+# 规划 mod 安装（Planner + Executor）
+uv run mclaw plan "Install Create mod for 1.20.1 Forge"
+
+# 全流程诊断（Planner → Executor → Diagnoser）
+uv run mclaw solve "Install Create mod for 1.20.1 Forge"
+
+# 监听崩溃报告目录
+uv run mclaw monitor watch
+```
+
+### 5. 运行测试
+
+```bash
+uv run poe test           # 或 python -m pytest -v
+```
+
+### 6. 停止服务
+
+```bash
+uv run poe infra-down     # docker compose down
 ```
 
 ## Platform Notes

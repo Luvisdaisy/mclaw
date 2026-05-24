@@ -1,6 +1,9 @@
+name: mclaw
+
 services:
   chromadb:
     image: chromadb/chroma:latest
+    container_name: mclaw-chromadb
     ports:
       - "8000:8000"
     volumes:
